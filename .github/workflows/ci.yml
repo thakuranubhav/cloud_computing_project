@@ -73,7 +73,7 @@ jobs:
 
     env:
       RELEASE_TAG: final
-      MODEL_ASSET: deliberately-bad-model.zip
+      MODEL_ASSET: pythia-70m-command-parser.zip
 
     steps:
       - name: Checkout repository
