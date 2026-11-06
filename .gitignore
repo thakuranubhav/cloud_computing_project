@@ -1,0 +1,32 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+
+results/*
+!results/.gitkeep
+
+models/*
+!models/.gitkeep
+
+*.log
+port-forward.log
+
+.DS_Store
+.vscode/
+.idea/
+
+coverage.xml
+htmlcov/
+
+# Local/generated model archives
+*.zip
+
+# Kubernetes/local artifacts
+.kube/

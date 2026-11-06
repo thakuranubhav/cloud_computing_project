@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: command-parser
+  namespace: app
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: command-parser
+  template:
+    metadata:
+      labels:
+        app: command-parser
+    spec:
+      containers:
+        - name: command-parser
+          image: command-parser:s3-v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: MODEL_URI
+              value: "s3://model-storage/pythia-70m-command-parser"
+            - name: MODEL_VERSION
+              value: "v1"
+            - name: S3_ENDPOINT
+              value: "http://seaweedfs-s3.data.svc.cluster.local:8333"
+            - name: MAX_NEW_TOKENS
+              value: "128"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: seaweedfs-s3-secret
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: seaweedfs-s3-secret
+                  key: AWS_SECRET_ACCESS_KEY
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+            limits:
+              cpu: "2"
+              memory: "2Gi"
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: command-parser
+  namespace: app
+spec:
+  selector:
+    app: command-parser
+  ports:
+    - port: 8000
+      targetPort: 8000
+  type: ClusterIP

@@ -1,0 +1,26 @@
+master:
+  replicas: 1
+
+volume:
+  replicas: 1
+  dataDirs:
+    - name: data
+      type: persistentVolumeClaim
+      size: 10Gi
+      storageClass: local-path
+      maxVolumes: 0
+
+filer:
+  replicas: 1
+  enablePVC: true
+  storage: 5Gi
+  storageClass: local-path
+
+s3:
+  enabled: true
+  port: 8333
+  enableAuth: true
+  credentials:
+    admin:
+      accessKey: ccadmin
+      secretKey: ccadmin-secret
