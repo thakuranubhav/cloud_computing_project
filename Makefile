@@ -11,9 +11,8 @@ up:
 	kubectl rollout status statefulset/seaweedfs-filer -n data --timeout=180s
 	kubectl rollout status statefulset/seaweedfs-volume -n data --timeout=180s
 	kubectl rollout status deployment/seaweedfs-s3 -n data --timeout=180s
-	kubectl port-forward -n data svc/seaweedfs-s3 8333:8333 > port-forward.log 2>&1 &
-	sleep 5
-	python upload_model.py
+	python scripts/download_release_model.py
+	kubectl port-forward -n data svc/seaweedfs-s3 8333:8333 > port-forward.log 2>&1 & sleep 5; python upload_model.py
 	kubectl create secret generic seaweedfs-s3-secret -n app --from-literal=AWS_ACCESS_KEY_ID=ccadmin --from-literal=AWS_SECRET_ACCESS_KEY=ccadmin-secret --dry-run=client -o yaml | kubectl apply -f -
 	docker build -t command-parser:s3-v1 .
 	k3d image import command-parser:s3-v1 -c cc-mini

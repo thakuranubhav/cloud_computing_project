@@ -30,3 +30,6 @@ htmlcov/
 
 # Kubernetes/local artifacts
 .kube/
+
+release-model.zip
+release-model-extracted/
