@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - master
+    tags:
       - final
   pull_request:
 
@@ -116,6 +117,7 @@ jobs:
 
       - name: Generate validation predictions
         run: |
+          mkdir -p results
           python scripts/predict_student.py \
             --model-dir release-model/extracted \
             --validation data/validation.jsonl \
